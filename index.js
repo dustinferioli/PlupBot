@@ -1,74 +1,100 @@
-require('dotenv').config()
-const tmi = require('tmi.js');
+require("dotenv").config();
+const tmi = require("tmi.js");
 const client = new tmi.Client({
   options: { debug: true },
   connection: {
     secure: true,
-    reconnect: true
+    reconnect: true,
   },
   identity: {
-    username: 'plupyumyumbot',
-    password: process.env.TWITCH_OAUTH_TOKEN
+    username: "plupyumyumbot",
+    password: process.env.TWITCH_OAUTH_TOKEN,
   },
-  channels: ['plup', 'madloverdusty']
+  channels: [
+    // "plup", 
+    "madloverdusty", 
+    // "hungrybox"
+  ],
 });
 
 client.connect();
 
-client.on('chat', (channel, tags, message, self) => {
-  // console.log(tags)
-  // switch (tags.username){
-  //   case 'ilacklogic':
-  //     client.say(channel, 'YOURMOM');
-  //     break;
-  //   case 'cazador_':
-  //     client.say(channel, 'YOURMOM')
-  //   case 'groenevis':
-  //     client.say(channel, 'BatChest')
-  //   case 'jacktaz':
-  //     client.say(channel, 'plupYUMYUM');
-  //     break; 
-  //   default:
-  //       break;
-  // }
+let lastMessage = []
+function lastMessageFunc(message){
+  array.push(message)
+  if (array.length === 1){
+    myLastMsgArray.splice(1, 0, message);
+  }
+  return array
+}
+
+
+// Write a function that adds an invisible space if lastMessage is the same as the message you're trying to send
+
+client.on("message", async (channel, tags, message, self) => {
+  // Ignore echoed messages.
+
+  try {
+    if (self) {
+      lastMessageFunc(message)
+      console.log(lastMessage)
+    } 
+
+    switch (message) {
+      case "plupYUMYUM":
+        client.say(channel, `plupYUMYUM`);
+        break;
+      case "ICANT":
+        client.say(channel, `@plup remove ICANT`);
+        break;
+      // case 'PogBones':
+      //   client.say(channel, `PogBones`);
+      //   break;
+      // case 'plupLoffun':
+      //   client.say(channel, 'plupLoffun')
+      case "AYAYA":
+        client.say(channel, "WEEBSDETECTED");
+        break;
+      case "!bestchatter":
+        client.say(channel, "MADLOVERdusty"); 
+      default:
+        break;
+    }
+  } catch (error) {
+    console.error(error)
+  }
+
+});
+
+
+
+let array = [];
+function lastFive(message){
+  array.push(message)
+  if (array.length === 6){
+    array.shift();
+    return array;
+  }
+
+
+  return array;
+}
+
+
+
+
+
+client.on("message", async (channel, tags, message, self) => {
+  if (message){
+    const blah = lastFive(message)
+      console.log(blah)
+  } 
 })
 
-client.on('message', async (channel, tags, message, self) => {
-  // Ignore echoed messages.
-  if(self) return;
-
-
-  switch (message) {
-    case 'plupYUMYUM':
-      client.say(channel, `plupYUMYUM`);
-      break;
-    // case 'ICANT':
-    //   client.say(channel, `@plup remove ICANT`);
-    //   break;
-    // case 'PogBones':
-    //   client.say(channel, `PogBones`);
-    //   break;
-    // case 'plupLoffun':
-    //   client.say(channel, 'plupLoffun')  
-    case 'AYAYA':
-      client.say(channel, 'WEEBSDETECTED');
-      break;
-    case '!bestchatter':
-      client.say(channel, 'MADLOVERdusty')  
-    default:
-      break;  
-    }
-
-    // if (message.startsWith('!js Math')){
-    //   let jsCommand = message.slice(4);
-    //   let jsMsg = await eval(jsCommand)
-    //   console.log(jsMsg)
-    //   // client.say(channel, 'This is your result: ', jsMsg)
-    //   client.say(channel, jsMsg)
-    // } else if (message.startsWith('!js')){
-    //   let jsCommand = message.slice(4);
-    //   let jsMsg = await eval(jsCommand)
-    //   client.say(channel, jsMsg)
-    // }
-
+client.on("message", async (channel, tags, message, self) => {
+  if (message.startsWith('!js ')){
+    let jsCommand = message.slice(4);
+    let jsMsg = eval(jsCommand)
+    client.say(channel, jsMsg)
+  }
 });
